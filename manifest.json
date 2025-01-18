@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "ChatGPT Interaction Tracker",
+  "description": "Track interactions with ChatGPT and summarize them.",
+  "version": "1.0",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "identity",
+    "webRequest",
+    "webRequestBlocking",
+    "https://*/*",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://chatgpt.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://chatgpt.com/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
