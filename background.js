@@ -1,6 +1,7 @@
 // background.js
 chrome.runtime.onInstalled.addListener(() => {
   console.log("Extension installed. Initializing...");
+  chrome.storage.local.remove("email");
   initializeExtension();
 });
 
@@ -40,6 +41,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     chrome.storage.local.set({ email: request.email }, () => {
       console.log("Email saved:", request.email);
       sendResponse({ success: true });
+      postEmailToServer(); // Call POST API to send email to backend
     });
     return true; // Keep the message channel open for async response
   }
@@ -50,9 +52,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "chat-interaction") {
     const { userMessages, chatGptResponses } = message;
     const conversationSummary = summarizeConversation(userMessages, chatGptResponses);
-
-    saveSummaryToDb(conversationSummary);
-    sendSummaryToEmail(conversationSummary);
   }
 });
 
@@ -63,4 +62,40 @@ const summarizeConversation = (userMessages, chatGptResponses) => {
     summary: `User and ChatGPT exchanged messages. User said: ${userMessages.length} times, GPT replied: ${chatGptResponses.length} times.`
   };
 };
+
+
+function postEmailToServer() {
+  // Retrieve the stored email from chrome.storage
+  chrome.storage.local.get("email", ({ email }) => {
+    if (!email) {
+      console.log("No email found in storage. Cannot post to server.");
+      return;
+    }
+
+    // Make a POST request with the stored email
+    fetch("http://localhost:8080/api/extension/member", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email })
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.text();
+      })
+      .then((text) => {
+        if (text === "Success") {
+          console.log("Request was successful, and the response is exactly 'Success'.");
+        } else {
+          console.log(`Request was successful, but the response is: '${text}'`);
+        }
+      })
+      .catch((error) => {
+        console.error("Error posting email to server:", error);
+      });
+  });
+}
 
