@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   const submitBtn = document.getElementById("popup-submit");
   const cancelBtn = document.getElementById("popup-cancel");
+  const confirmationEl = document.getElementById("confirmation-message");
 
   // On "Submit" click
   submitBtn.addEventListener("click", () => {
@@ -14,7 +15,18 @@ document.addEventListener("DOMContentLoaded", () => {
           console.log("Background response:", response);
         });
 
-        window.close();
+        // Hide form elements or disable further interaction if needed
+        submitBtn.disabled = true;
+        cancelBtn.disabled = true;
+        // Show the confirmation message
+        if (confirmationEl) {
+          confirmationEl.style.display = "block";
+        }
+
+        // Optionally close the window after a short delay
+        setTimeout(() => {
+          window.close();
+        }, 1500); // waits 1.5 seconds before closing
       });
     } else {
       alert("Please enter a valid email.");

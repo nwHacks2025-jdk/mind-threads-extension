@@ -1,20 +1,31 @@
 <!DOCTYPE html>
-<html>
+<html lang='en'>
 <head>
   <meta charset="UTF-8" />
   <title>My Extension Popup</title>
+  <link rel="stylesheet" href="popup.css" />
 </head>
 <body>
-<form id="email-form">
-  <label for="email-input">Enter your email:</label>
-  <input type="email" id="email-input" required placeholder="Your email" />
-  <div>
-    <button type="button" id="popup-submit">Submit</button>
-    <button type="button" id="popup-cancel">Cancel</button>
+<div id="content-wrapper">
+  <form id="email-form">
+    <label id="form-label" for="email-input">Enter your email<br />Amplify your mind</label>
+    <input type="email" id="email-input" required placeholder="yourname@email.com" />
+    <div>
+      <button type="button" id="popup-submit">Submit</button>
+      <button type="button" id="popup-cancel">Cancel</button>
+    </div>
+  </form>
+  <div id='logo-space'>
+    <img id="logo" src="/static/MindThreadLogo.png" alt="Mind Thread Logo">
   </div>
-</form>
+  <div id="confirmation-message" style="display:none; text-align:center; margin-top:10px;">
+    <p>Successfully submitted!</p>
+  </div>
+</div>
+
 
 <!-- Link to your popup.js (where we handle the popup logic) -->
 <script src="popup.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>
