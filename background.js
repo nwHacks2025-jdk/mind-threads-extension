@@ -70,13 +70,12 @@ const summarizeConversation = (userMessages, chatGptResponses) => {
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.type === "post-email-to-server") {
-    postEmailToServer(); // function that does the fetch
+    postEmailToServer();
     sendResponse({ success: true });
   }
 });
 
 function postEmailToServer() {
-  // Retrieve the stored email from chrome.storage
   chrome.storage.local.get("email", ({ email }) => {
     if (!email) {
       console.log("No email found in storage. Cannot post to server.");
