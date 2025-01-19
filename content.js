@@ -66,6 +66,10 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     } else {
       console.log("Email already saved:", result.email);
+
+      chrome.runtime.sendMessage({ type: "post-email-to-server" }, (response) => {
+        console.log("postEmailToServer response:", response);
+      });
     }
   });
 });

@@ -9,7 +9,11 @@ document.addEventListener("DOMContentLoaded", () => {
       // Save the email in Chrome storage
       chrome.storage.local.set({ email }, () => {
         console.log("Email saved:", email);
-        // Optionally close the popup (or provide some success UI)
+
+        chrome.runtime.sendMessage({ type: "post-email-to-server" }, (response) => {
+          console.log("Background response:", response);
+        });
+
         window.close();
       });
     } else {

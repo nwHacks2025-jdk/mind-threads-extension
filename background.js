@@ -1,4 +1,4 @@
-// background.js
+// Initialization codes
 chrome.runtime.onInstalled.addListener(() => {
   console.log("Extension installed. Initializing...");
   chrome.storage.local.remove("email"); // This is introduced for the sake of debugging
@@ -19,6 +19,7 @@ function initializeExtension() {
   // Add any other startup logic here
 }
 
+// Extract messages from requests
 chrome.webRequest.onCompleted.addListener(
   (details) => {
     if (details.url.includes("/backend-api/lat/r")) {
@@ -35,6 +36,8 @@ chrome.webRequest.onCompleted.addListener(
   { urls: ["*://chatgpt.com/backend-api/lat/r*"] }
 );
 
+
+// Open popup when message arrives accordingly
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "open-extension-popup") {
     chrome.action.openPopup().then(() => {
@@ -49,6 +52,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 
+// Extract "interaction" from the messages
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "chat-interaction") {
     const { userMessages, chatGptResponses } = message;
@@ -64,6 +68,12 @@ const summarizeConversation = (userMessages, chatGptResponses) => {
   };
 };
 
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (msg.type === "post-email-to-server") {
+    postEmailToServer(); // function that does the fetch
+    sendResponse({ success: true });
+  }
+});
 
 function postEmailToServer() {
   // Retrieve the stored email from chrome.storage
