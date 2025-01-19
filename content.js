@@ -125,3 +125,70 @@ const trackMessages = () => {
   }
 };
 
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Create a floating toggle button
+  const toggleButton = document.createElement('button');
+  toggleButton.innerText = 'MindThread On'; // Initial button text
+  toggleButton.id = 'floating-toggle-button';
+
+  // Apply basic styles for absolute positioning and default color
+  Object.assign(toggleButton.style, {
+    position: 'absolute', // Changed from fixed to absolute
+    backgroundColor: '#34b96d',
+    padding: '8px 12px',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '30px',
+    cursor: 'pointer',
+    fontSize: '14px',
+    boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
+    transition: 'background-color 0.3s ease',
+    zIndex: '10000'
+  });
+
+  // Append the button to the body
+  document.body.appendChild(toggleButton);
+
+  // Track toggle state in a persistent variable
+  let isOn = true; // 'true' means MindThread is currently ON
+
+  // Function to position the button relative to #composer-background
+  const positionButton = () => {
+    const targetElement = document.querySelector('#composer-background');
+    if (targetElement) {
+      const rect = targetElement.getBoundingClientRect();
+      // Example positioning: place the button above and to the right of #composer-background
+      toggleButton.style.top = `${window.scrollY + rect.top - toggleButton.offsetHeight - 20}px`;
+      toggleButton.style.left = `${window.scrollX + rect.right - 124}px`;
+    } else {
+      console.warn('#composer-background not found!');
+    }
+  };
+
+  // Initial positioning
+  positionButton();
+
+  // Update position on window resize (optional)
+  window.addEventListener('resize', positionButton);
+  window.addEventListener('scroll', positionButton); // Optional: update on scroll if needed
+
+  // Add a click event listener to toggle color and text
+  toggleButton.addEventListener('click', () => {
+    // Flip the state
+    isOn = !isOn;
+
+    // Update styles and text based on the new state
+    if (isOn) {
+      toggleButton.style.backgroundColor = '#34b96d';
+      toggleButton.style.padding = '8px 12px';
+      toggleButton.innerText = 'MindThread On';
+    } else {
+      toggleButton.style.backgroundColor = '#9CA3AF';
+      toggleButton.style.padding = '8px 11.5px';
+      toggleButton.innerText = 'MindThread Off';
+    }
+
+    console.log(`Toggle button clicked: ${toggleButton.innerText}`);
+  });
+});
