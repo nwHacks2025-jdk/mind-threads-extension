@@ -1,4 +1,5 @@
 console.log("Content script loaded");
+let isOn = true;
 
 // Track processed messages (avoid duplicates)
 const processedMessageIds = new Set();
@@ -32,6 +33,12 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 const trackMessages = () => {
+  // If toggle is off, do not proceed with tracking or server calls
+  if (!isOn) {
+    console.log("Tracking is disabled by the toggle.");
+    return;
+  }
+
   try {
     setTimeout(() => {
       const messages = document.querySelectorAll("article");
@@ -95,17 +102,21 @@ const trackMessages = () => {
             messageAt: new Date().toISOString().split('T')[0]
           };
 
-          // Sending POST API Request
-          chrome.runtime.sendMessage(
-            { type: "post-message-to-server", bodyData: bodyData },
-            (response) => {
-              if (chrome.runtime.lastError) {
-                console.error("Error in sendMessage:", chrome.runtime.lastError.message);
-              } else {
-                console.log("postMessageToServer response:", response);
+          // Only send the POST request if the toggle is still on
+          if (isOn) {
+            chrome.runtime.sendMessage(
+              { type: "post-message-to-server", bodyData: bodyData },
+              (response) => {
+                if (chrome.runtime.lastError) {
+                  console.error("Error in sendMessage:", chrome.runtime.lastError.message);
+                } else {
+                  console.log("postMessageToServer response:", response);
+                }
               }
-            }
-          );
+            );
+          } else {
+            console.log("Toggle turned off. Skipping postMessageToServer call.");
+          }
 
         });
       }
@@ -129,7 +140,7 @@ const trackMessages = () => {
 document.addEventListener('DOMContentLoaded', () => {
   // Create a floating toggle button
   const toggleButton = document.createElement('button');
-  toggleButton.innerText = 'MindThread On'; // Initial button text
+  toggleButton.innerText = 'Mind Thread On'; // Initial button text
   toggleButton.id = 'floating-toggle-button';
 
   // Apply basic styles for absolute positioning and default color
@@ -139,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
     padding: '8px 12px',
     color: '#fff',
     border: 'none',
-    borderRadius: '30px',
+    borderRadius: '17px',
     cursor: 'pointer',
     fontSize: '14px',
     boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
@@ -150,9 +161,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Append the button to the body
   document.body.appendChild(toggleButton);
 
-  // Track toggle state in a persistent variable
-  let isOn = true; // 'true' means MindThread is currently ON
-
   // Function to position the button relative to #composer-background
   const positionButton = () => {
     const targetElement = document.querySelector('#composer-background');
@@ -160,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const rect = targetElement.getBoundingClientRect();
       // Example positioning: place the button above and to the right of #composer-background
       toggleButton.style.top = `${window.scrollY + rect.top - toggleButton.offsetHeight - 20}px`;
-      toggleButton.style.left = `${window.scrollX + rect.right - 124}px`;
+      toggleButton.style.left = `${window.scrollX + rect.right - 128}px`;
     } else {
       console.warn('#composer-background not found!');
     }
@@ -181,12 +189,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Update styles and text based on the new state
     if (isOn) {
       toggleButton.style.backgroundColor = '#34b96d';
+      toggleButton.style.color = '#fff';
       toggleButton.style.padding = '8px 12px';
-      toggleButton.innerText = 'MindThread On';
+      toggleButton.innerText = 'Mind Thread On';
     } else {
-      toggleButton.style.backgroundColor = '#9CA3AF';
+      toggleButton.style.backgroundColor = '#2F2F2F';
+      toggleButton.style.color = '#B4B4B4';
       toggleButton.style.padding = '8px 11.5px';
-      toggleButton.innerText = 'MindThread Off';
+      toggleButton.innerText = 'Mind Thread Off';
     }
 
     console.log(`Toggle button clicked: ${toggleButton.innerText}`);
