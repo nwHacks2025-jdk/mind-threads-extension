@@ -64,10 +64,3 @@ const summarizeConversation = (userMessages, chatGptResponses) => {
   };
 };
 
-const saveSummaryToDb = (summary) => {
-  console.log("Saved summary:", summary);
-};
-
-const sendSummaryToEmail = (summary) => {
-  console.log("Sent summary to email:", summary);
-};
