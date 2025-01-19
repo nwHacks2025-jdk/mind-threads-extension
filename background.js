@@ -6,11 +6,9 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 function initializeExtension() {
-  // Example: Check if the email is already saved
   chrome.storage.local.get("email", (result) => {
     if (!result.email) {
       console.log("No email found. Prompting user...");
-      // Optionally trigger an action or send a message to a content script
     } else {
       console.log("Email already exists:", result.email);
     }
@@ -72,6 +70,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.type === "post-email-to-server") {
     postEmailToServer();
     sendResponse({ success: true });
+    return true;
   }
 });
 
@@ -108,4 +107,41 @@ function postEmailToServer() {
       });
   });
 }
+
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (msg.type === "post-message-to-server" && msg.bodyData !== undefined) {
+    postMessageToServer(msg.bodyData);
+    sendResponse({ success: true });
+    return true;
+  }
+});
+
+function postMessageToServer(bodyData) {
+  try {
+      // Make a POST request to send user message
+      fetch("http://localhost:8080/api/extension/thread", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(bodyData)
+      }).then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.text();
+      }).then((text) => {
+        if (text === "Success") {
+          console.log("Message request was successful, and the response is exactly 'Success'.");
+        } else {
+          console.log(`Message request was successful, but the response is: '${text}'`);
+        }
+      }).catch((error) => {
+        console.error("Error posting message to server:", error);
+      });
+  } catch (error) {
+    console.error("Error in trackMessages:", error);
+  }
+}
+
 
