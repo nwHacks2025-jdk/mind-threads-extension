@@ -1,7 +1,7 @@
 // background.js
 chrome.runtime.onInstalled.addListener(() => {
   console.log("Extension installed. Initializing...");
-  chrome.storage.local.remove("email");
+  chrome.storage.local.remove("email"); // This is introduced for the sake of debugging
   initializeExtension();
 });
 
