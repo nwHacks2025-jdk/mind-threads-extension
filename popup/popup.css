@@ -1,0 +1,76 @@
+/* General body styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Popup container */
+#custom-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    max-width: 400px;
+    width: 100%;
+    display: none; /* Initially hidden */
+    text-align: center;
+}
+
+#custom-popup.hidden {
+    display: none;
+}
+
+/* Label style */
+form#email-form label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Input style */
+form#email-form input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+/* Button styles */
+#popup-buttons button {
+    background-color: #007BFF;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin: 0 5px;
+    transition: background-color 0.3s;
+}
+
+#popup-buttons button:hover {
+    background-color: #0056b3;
+}
+
+/* Responsive design */
+@media (max-width: 480px) {
+    #custom-popup {
+        padding: 15px 20px;
+    }
+}

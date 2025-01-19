@@ -35,15 +35,16 @@ chrome.webRequest.onCompleted.addListener(
   { urls: ["*://chatgpt.com/backend-api/lat/r*"] }
 );
 
-// Listen for messages from content or popup scripts
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === "saveEmail") {
-    chrome.storage.local.set({ email: request.email }, () => {
-      console.log("Email saved:", request.email);
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === "open-extension-popup") {
+    chrome.action.openPopup().then(() => {
       sendResponse({ success: true });
-      postEmailToServer(); // Call POST API to send email to backend
+    }).catch((error) => {
+      console.error("Failed to open popup:", error);
+      sendResponse({ success: false, error: error.message });
     });
-    return true; // Keep the message channel open for async response
+    // Return true to indicate you want to send a response asynchronously.
+    return true;
   }
 });
 

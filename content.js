@@ -1,5 +1,6 @@
 console.log("Content script loaded");
 
+// Track processed messages (avoid duplicates)
 const processedMessageIds = new Set();
 
 const trackMessages = () => {
@@ -31,6 +32,7 @@ const trackMessages = () => {
       }
     });
 
+    // Send to background or wherever you handle them
     if (userMessages.length > 0 || chatGptResponses.length > 0) {
       chrome.runtime.sendMessage({
         type: "chat-interaction",
@@ -44,6 +46,7 @@ const trackMessages = () => {
   }
 };
 
+// Listen for messages from background
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "fetch-chat-messages") {
     console.log("Fetching latest chat messages...");
@@ -51,21 +54,19 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 });
 
+// Check stored email on page load
 document.addEventListener("DOMContentLoaded", () => {
   chrome.storage.local.get("email", (result) => {
     if (!result.email) {
-      const userEmail = prompt("Please enter your email to continue:");
-      if (userEmail) {
-        chrome.runtime.sendMessage({ action: "saveEmail", email: userEmail }, (response) => {
-          if (response.success) {
-            console.log("Email saved successfully.");
-          } else {
-            console.error("Failed to save email.");
-          }
-        });
-      }
+      console.log("No email found. Requesting background to open extension popup...");
+
+      // Send a request to open the extension popup
+      chrome.runtime.sendMessage({ type: "open-extension-popup" }, (response) => {
+        console.log("Background response:", response);
+      });
     } else {
       console.log("Email already saved:", result.email);
     }
   });
 });
+
