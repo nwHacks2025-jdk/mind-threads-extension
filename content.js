@@ -50,3 +50,22 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     trackMessages();
   }
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  chrome.storage.local.get("email", (result) => {
+    if (!result.email) {
+      const userEmail = prompt("Please enter your email to continue:");
+      if (userEmail) {
+        chrome.runtime.sendMessage({ action: "saveEmail", email: userEmail }, (response) => {
+          if (response.success) {
+            console.log("Email saved successfully.");
+          } else {
+            console.error("Failed to save email.");
+          }
+        });
+      }
+    } else {
+      console.log("Email already saved:", result.email);
+    }
+  });
+});
